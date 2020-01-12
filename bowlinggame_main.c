@@ -19,31 +19,36 @@ int input_prase(char *input, int size)
     /* '0' stand for '-' and check input string*/
     for (i = 0; i < size; i++) {
         if (input[i] == '0') {
-            printf("input string%d ERR:0 !!!\n", i);
+            printf("[ERR]input string%d ERR:0 !!!\n", i);
             return -1;
-        } else if (input[i] == '-') {
+        } else if (input[i] == '-' || input[i] == '_') {
             input[i] = '0';
         }
     }
 
     for (i = 0; i < size; i++) {
+        if (round_cnt >= MAX_TOTAL_ROUND) {
+            printf("[ERR]round_cnt is OVER %d !!!\n", round_cnt);
+            return -1;
+        }
         if (input[i] == 'x' || input[i] == 'X') {
-            g_each_round[round_cnt].score = 10;
+            g_each_round[round_cnt].score[flag] = 10;
             g_each_round[round_cnt].game_type = TYPE_STRIKE;
             round_cnt++;
             flag = 0;
         } else if (input[i] == '/') {
-            g_each_round[round_cnt].score = 10;
+            g_each_round[round_cnt].score[flag] = 10;
             g_each_round[round_cnt].game_type = TYPE_SPARE;
             round_cnt++;
             flag = 0;
         } else if ((input[i] >= '0' || input[i] <= '9')) {
             g_each_round[round_cnt].game_type = TYPE_NORMAL;
             if (flag) {
-                g_each_round[round_cnt].score += (input[i] - '0');
+                g_each_round[round_cnt].score[flag] += (input[i] - '0');
                 round_cnt++;
                 flag = 0;
             } else {
+                g_each_round[round_cnt].score[flag] += (input[i] - '0');
                 flag++;
             }
         } else {
@@ -51,6 +56,7 @@ int input_prase(char *input, int size)
             return -1;
         }
     }
+    return 0;
 }
 
 int calc_score(char *input, int size, int *score)
@@ -66,11 +72,15 @@ int calc_score(char *input, int size, int *score)
 
     for (i = 0; i < NORMAL_ROUND; i++) {
         if (g_each_round[i].game_type == TYPE_STRIKE) {
-            tmp += g_each_round[i].score + g_each_round[i + 1].score + g_each_round[i + 2].score;
+            if (i == 9 || g_each_round[i + 1].game_type == TYPE_STRIKE) {
+                tmp += (10 + g_each_round[i + 1].score[0] + g_each_round[i + 2].score[0]);
+            } else {
+                tmp += (10 + g_each_round[i + 1].score[0] + g_each_round[i + 1].score[1]);
+            }
         } else if (g_each_round[i].game_type == TYPE_SPARE) {
-            tmp += g_each_round[i].score + g_each_round[i + 1].score;
+            tmp += (10 + g_each_round[i + 1].score[0]);
         } else {
-            tmp += g_each_round[i].score;
+            tmp += (g_each_round[i].score[0] + g_each_round[i].score[1]);
         }
     }
     *score = tmp;

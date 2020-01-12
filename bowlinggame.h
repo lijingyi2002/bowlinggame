@@ -10,7 +10,7 @@ enum {
 };
 
 struct game_statue {
-    int score;
+    int score[2];
     int game_type;
 };
 

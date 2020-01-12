@@ -6,7 +6,7 @@ OBJS = $(patsubst %.c, %.o, $(SRC))
 #OBJS = bowlinggame_main.o \
 #       bowlinggame_test.o 
 TARGET = bowlinggame.out
-all: $(TARGET)
+#all: $(TARGET)
 
 bowlinggame: $(OBJS)
 	echo "start complie"
