@@ -12,8 +12,8 @@ int input_prase(char *input, int size)
     int round_cnt = 0;
     bool flag = 0;
 
-    if ((size > MAX_TOTAL_SIZE && size < 11) || input == NULL) {
-        printf("input ERR size%d !!!\n", size);
+    if ((size > MAX_TOTAL_SIZE || size < 11) || input == NULL) {
+        printf("[ERR]input size %d !!!\n", size);
         return -1;
     }
     /* '0' stand for '-' and check input string*/
